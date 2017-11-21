@@ -19,6 +19,11 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(exclude = {"teacher", "subject", "students"})
 @Entity
 public class Lecture implements Serializable {
 	
@@ -49,54 +54,5 @@ public class Lecture implements Serializable {
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "lectures")
 	@JsonBackReference
 	private Set<Student> students = new HashSet<>(0);
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getClassNumber() {
-		return classNumber;
-	}
-
-	public void setClassNumber(Long classNumber) {
-		this.classNumber = classNumber;
-	}
-
 	
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public Teacher getTeacher() {
-		return teacher;
-	}
-
-	public void setTeacher(Teacher teacher) {
-		this.teacher = teacher;
-	}
-
-	public Subject getSubject() {
-		return subject;
-	}
-
-	public void setSubject(Subject subject) {
-		this.subject = subject;
-	}
-
-	public Set<Student> getStudents() {
-		return students;
-	}
-
-	public void setStudents(Set<Student> students) {
-		this.students = students;
-	}
 }

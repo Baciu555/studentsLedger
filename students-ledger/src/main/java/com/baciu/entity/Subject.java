@@ -12,6 +12,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(exclude = "lectures")
 @Entity
 public class Subject implements Serializable {
 	
@@ -27,31 +32,5 @@ public class Subject implements Serializable {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "subject")
 	private Set<Lecture> lectures = new HashSet<>(0);
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Set<Lecture> getLectures() {
-		return lectures;
-	}
-
-	public void setLectures(Set<Lecture> lectures) {
-		this.lectures = lectures;
-	}
 	
-	
-
 }

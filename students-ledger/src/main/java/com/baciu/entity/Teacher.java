@@ -12,6 +12,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(exclude = "lectures")
 @Entity
 public class Teacher implements Serializable {
 	
@@ -33,45 +39,5 @@ public class Teacher implements Serializable {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "teacher")
 	private Set<Lecture> lectures = new HashSet<>(0);
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
-	public Double getSalary() {
-		return salary;
-	}
-
-	public void setSalary(Double salary) {
-		this.salary = salary;
-	}
-
-	public Set<Lecture> getLectures() {
-		return lectures;
-	}
-
-	public void setLectures(Set<Lecture> lectures) {
-		this.lectures = lectures;
-	}
-
+	
 }
