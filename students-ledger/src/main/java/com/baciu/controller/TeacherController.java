@@ -3,7 +3,7 @@ package com.baciu.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,28 +22,33 @@ public class TeacherController {
 	private TeacherService teacherService;
 	
 	@GetMapping("teachers")
-	public List<Teacher> getTeachers() {
-		return teacherService.getAll();
+	public ResponseEntity<List<Teacher>> getTeachers() {
+		return null;
 	}
 	
-	@GetMapping(value = "teachers/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Teacher getTeacher(@PathVariable("id") Long id) {
-		return teacherService.getTeacher(id);
+	@GetMapping("teachers/{id}")
+	public ResponseEntity<Teacher> getTeacher(@PathVariable("id") Long id) {
+		return null;
+	}
+	
+	@GetMapping("teachers/{id}/lectures")
+	public ResponseEntity<Teacher> getTeacherLectures(@PathVariable("id") Long id) {
+		return null;
 	}
 	
 	@PostMapping("teachers")
-	public Teacher addTeacher(@RequestBody Teacher teacher) {
-		return teacherService.addTeacher(teacher);
+	public ResponseEntity<Teacher> addTeacher(@RequestBody Teacher teacher) {
+		return null;
 	}
 	
 	@PutMapping("teachers")
-	public Teacher updateTeacher(@RequestBody Teacher teacher) {
-		return teacherService.updateTeacher(teacher);
+	public ResponseEntity<Teacher> updateTeacher(@RequestBody Teacher teacher) {
+		return null;
 	}
 	
 	@DeleteMapping("teachers")
-	public void deleteTeacher(@RequestBody Teacher teacher) {
-		teacherService.deteleTeacher(teacher);
+	public ResponseEntity<String> deleteTeacher(@RequestBody Teacher teacher) {
+		return null;
 	}
 
 }

@@ -17,8 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -43,16 +41,13 @@ public class Lecture implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "teacher_id", nullable = false)
-	@JsonBackReference
 	private Teacher teacher;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "subject_id", nullable = false)
-	@JsonBackReference
 	private Subject subject;
 	
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "lectures")
-	@JsonBackReference
 	private Set<Student> students = new HashSet<>(0);
 	
 }

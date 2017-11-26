@@ -3,6 +3,7 @@ package com.baciu.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,28 +22,33 @@ public class SubjectController {
 	private SubjectService subjectService;
 	
 	@GetMapping("subjects")
-	public List<Subject> getTeachers() {
-		return subjectService.getAll();
+	public ResponseEntity<List<Subject>> getTeachers() {
+		return null;
 	}
 	
 	@GetMapping("subjects/{id}")
-	public Subject getTeacher(@PathVariable("id") Long id) {
-		return subjectService.getSubject(id);
+	public ResponseEntity<Subject> getTeacher(@PathVariable("id") Long id) {
+		return null;
+	}
+	
+	@GetMapping("subjects/{id}/lectures")
+	public ResponseEntity<Subject> getTeacherLectures(@PathVariable("id") Long id) {
+		return null;
 	}
 	
 	@PostMapping("subjects")
-	public Subject addTeacher(@RequestBody Subject subject) {
-		return subjectService.addSubject(subject);
+	public ResponseEntity<Subject> addTeacher(@RequestBody Subject subject) {
+		return null;
 	}
 	
 	@PutMapping("subjects")
-	public Subject updateTeacher(@RequestBody Subject subject) {
-		return subjectService.updateSubject(subject);
+	public ResponseEntity<Subject> updateTeacher(@RequestBody Subject subject) {
+		return null;
 	}
 	
 	@DeleteMapping("subjects")
-	public void deleteTeacher(@RequestBody Subject subject) {
-		subjectService.deleteSubject(subject);
+	public ResponseEntity<String> deleteTeacher(@RequestBody Subject subject) {
+		return null;
 	}
 
 }
