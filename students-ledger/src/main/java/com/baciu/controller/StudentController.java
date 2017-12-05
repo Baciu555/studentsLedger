@@ -1,11 +1,12 @@
 package com.baciu.controller;
 
-import java.util.List;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,53 +15,74 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.baciu.converter.StudentConverter;
 import com.baciu.dto.StudentDTO;
 import com.baciu.entity.Student;
 import com.baciu.service.StudentService;
 
 @RestController
+@CrossOrigin(origins="*")
 public class StudentController {
 	
 	@Autowired
 	private StudentService studentService;
 	
 	@GetMapping("students")
-	public ResponseEntity<List<Student>> getAll() {
-		return null;
+	public ResponseEntity<?> getAll() {
+		return new ResponseEntity<>(studentService.getAll(), HttpStatus.OK);
 	}
 	
 	@GetMapping("students/{id}")
-	public ResponseEntity<StudentDTO> getStudent(@PathVariable("id") Long id) {
-		Student student = studentService.getStudent(id);
-		StudentConverter studentConverter = new StudentConverter();
-		StudentDTO studentDTO = studentConverter.toDTO(student);
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.set("MyResponseHeader", "MyValue");
-		return new ResponseEntity<StudentDTO>(studentDTO, responseHeaders, HttpStatus.OK);
+	public ResponseEntity<?> getStudent(@PathVariable("id") Long id) {
+		StudentDTO studentDTO = studentService.getStudent(id);
+		if (studentDTO == null)
+			return new ResponseEntity<>("user not found", HttpStatus.BAD_REQUEST);
+		
+		return new ResponseEntity<>(studentDTO, HttpStatus.OK);
 	}
 	
 	@GetMapping("students/{id}/lectures")
-	public ResponseEntity<StudentDTO> getStudentLectures(@PathVariable("id") Long id) {
+	public ResponseEntity<?> getStudentLectures(@PathVariable("id") Long id) {
+		StudentDTO studentDTO = studentService.getStudentLectures(id);
+		if (studentDTO == null)
+			return new ResponseEntity<>("user not found", HttpStatus.BAD_REQUEST);
 		
-		return null;
+		return new ResponseEntity<>(studentDTO, HttpStatus.OK);
 	}
 	
 	@PostMapping("students")
-	public ResponseEntity<StudentDTO> addStudent(@RequestBody Student student) {
-		return null;
+	public ResponseEntity<?> addStudent(@Valid @RequestBody Student student, Errors errors) {
+		if (errors.hasErrors())
+			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+		
+		StudentDTO studentDTO = new StudentDTO();
+		try {
+			studentDTO = studentService.addStudent(student);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		
+		return new ResponseEntity<>(studentDTO, HttpStatus.OK);
 	}
 	
 	@PutMapping("students")
-	public ResponseEntity<StudentDTO> updateStudent(@RequestBody Student student) {
-		return null;
+	public ResponseEntity<?> updateStudent(@Valid @RequestBody Student student, Errors errors) {
+		if (errors.hasErrors())
+			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+		
+		StudentDTO studentDTO = studentService.updateStudent(student);
+		if (studentDTO == null)
+			return new ResponseEntity<>("email already exists", HttpStatus.BAD_REQUEST);
+			
+		return new ResponseEntity<>(studentDTO, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("students")
-	public ResponseEntity<String> deleteStudent(@RequestBody Student student) {
-		return null;
+	public ResponseEntity<?> deleteStudent(@Valid @RequestBody Student student, Errors errors) {
+		if (errors.hasErrors())
+			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+		
+		studentService.deleteStudent(student);
+		return new ResponseEntity<>("user deleted", HttpStatus.OK);
 	}
-	
-	
 
 }
