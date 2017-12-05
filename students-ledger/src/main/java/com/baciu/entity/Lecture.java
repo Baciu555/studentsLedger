@@ -1,7 +1,7 @@
 package com.baciu.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,8 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,11 +32,12 @@ public class Lecture implements Serializable {
 	private Long id;
 	
 	@Column(nullable = false)
+	@NotNull(message = "class number may not be null")
 	private Long classNumber;
 	
 	@Column(nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date date;
+//	@Temporal(TemporalType.TIMESTAMP)
+	private LocalDateTime date;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "teacher_id", nullable = false)
