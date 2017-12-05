@@ -7,5 +7,7 @@ import com.baciu.entity.Student;
 
 @Repository
 public interface StudentRepository extends CrudRepository<Student, Long> {
+	
+	public Student findByEmail(String email);
 
 }

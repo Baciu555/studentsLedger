@@ -6,4 +6,6 @@ import com.baciu.entity.Subject;
 
 public interface SubjectRepository extends CrudRepository<Subject, Long> {
 
+	Subject findByName(String name);
+
 }

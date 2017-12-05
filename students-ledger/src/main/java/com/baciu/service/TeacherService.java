@@ -1,10 +1,12 @@
 package com.baciu.service;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baciu.converter.TeacherConverter;
+import com.baciu.dto.TeacherDTO;
 import com.baciu.entity.Teacher;
 import com.baciu.repository.TeacherRepository;
 
@@ -14,24 +16,40 @@ public class TeacherService {
 	@Autowired
 	private TeacherRepository teacherRepository;
 	
-	public Teacher getTeacher(Long id) {
-		return teacherRepository.findOne(id);
+	@Autowired
+	private TeacherConverter teacherConverter;
+	
+	public TeacherDTO getTeacher(Long id) {
+		if (!teacherRepository.exists(id))
+			return null;
+		
+		return teacherConverter.toDTO(teacherRepository.findOne(id));
 	}
 	
-	public Teacher addTeacher(Teacher teacher) {
-		return teacherRepository.save(teacher);
+	public TeacherDTO getTeacherLectures(Long id) {
+		if (!teacherRepository.exists(id))
+			return null;
+		
+		return teacherConverter.toDTOLectures(teacherRepository.findOne(id));
 	}
 	
-	public Teacher updateTeacher(Teacher teacher) {
-		return teacherRepository.save(teacher);
+	public TeacherDTO addTeacher(Teacher teacher) throws Exception {
+		if (teacherRepository.findOne(teacher.getId()) != null)
+			throw new Exception("taecher already exists");
+		
+		return teacherConverter.toDTO(teacherRepository.save(teacher));
 	}
 	
-	public void deteleTeacher(Teacher teacher) {
+	public TeacherDTO updateTeacher(Teacher teacher) {
+		return teacherConverter.toDTO(teacherRepository.save(teacher));
+	}
+	
+	public void deleteTeacher(Teacher teacher) {
 		teacherRepository.delete(teacher);
 	}
 
-	public List<Teacher> getAll() {
-		return (List<Teacher>) teacherRepository.findAll();
+	public Set<TeacherDTO> getAll() {
+		return teacherConverter.toDTO(teacherRepository.findAll());
 	}
 
 }

@@ -1,10 +1,12 @@
 package com.baciu.service;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baciu.converter.StudentConverter;
+import com.baciu.dto.StudentDTO;
 import com.baciu.entity.Student;
 import com.baciu.repository.StudentRepository;
 
@@ -14,24 +16,46 @@ public class StudentService {
 	@Autowired
 	private StudentRepository studentRepository;
 	
-	public Student getStudent(Long id) {
-		return studentRepository.findOne(id);
+	@Autowired
+	private StudentConverter studentConverter;
+	
+	public StudentDTO getStudent(Long id) {
+		if (!studentRepository.exists(id))
+			return null;
+		
+		return studentConverter.toDTO(studentRepository.findOne(id));
 	}
 	
-	public Student addStudent(Student student) {
-		return studentRepository.save(student);
+	public StudentDTO getStudentLectures(Long id) {
+		if (!studentRepository.exists(id))
+			return null;
+		
+		return studentConverter.toDTOLectures(studentRepository.findOne(id));
 	}
 	
-	public Student updateStudent(Student student) {
-		return studentRepository.save(student);
+	public StudentDTO addStudent(Student student) throws Exception {
+		if (studentRepository.findOne(student.getId()) != null)
+			throw new Exception("user already exists");
+		
+		if (studentRepository.findByEmail(student.getEmail()) != null)
+			throw new Exception("email already exists");
+		
+		return studentConverter.toDTO(studentRepository.save(student));
+	}
+	
+	public StudentDTO updateStudent(Student student) {
+		if (studentRepository.findByEmail(student.getEmail()) != null)
+			return null;
+		
+		return studentConverter.toDTO(studentRepository.save(student));
 	}
 	
 	public void deleteStudent(Student student) {
 		studentRepository.delete(student);
 	}
 
-	public List<Student> getAll() {
-		return (List<Student>) studentRepository.findAll();
+	public Set<StudentDTO> getAll() {
+		return studentConverter.toDTO(studentRepository.findAll());
 	}
 
 }
