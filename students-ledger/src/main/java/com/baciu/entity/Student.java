@@ -22,7 +22,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(exclude = "lectures")
+@EqualsAndHashCode(exclude = {"lectures", "roles"})
 @Entity
 public class Student implements Serializable {
 	
@@ -48,6 +48,7 @@ public class Student implements Serializable {
 	private String surname;
 	
 	@Column(nullable = false, unique = true)
+	@NotEmpty(message = "email may not be empty")
 	@Email
 	private String email;
 	
@@ -55,10 +56,19 @@ public class Student implements Serializable {
 	@NotEmpty(message = "course may not be empty")
 	private String course;
 	
+	@Column(nullable = false)
+	private String password;
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "student_lecture", joinColumns = {
 			@JoinColumn(name = "student_id")},
 			inverseJoinColumns = {@JoinColumn(name = "lecture_id")})
 	private Set<Lecture> lectures = new HashSet<>(0);
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "student_role", joinColumns = {
+			@JoinColumn(name = "student_id")},
+			inverseJoinColumns = {@JoinColumn(name = "role_id")})
+	private Set<Role> roles = new HashSet<>(0);
 
 }

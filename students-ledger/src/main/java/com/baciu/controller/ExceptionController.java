@@ -12,7 +12,7 @@ public class ExceptionController {
 	
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<?> messageNotReadableExceptionHandle (HttpMessageNotReadableException e) {
-		return new ResponseEntity<>("hehehe", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>("bad request", HttpStatus.BAD_REQUEST);
 	}
 
 }

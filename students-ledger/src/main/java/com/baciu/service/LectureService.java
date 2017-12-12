@@ -1,6 +1,5 @@
 package com.baciu.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -38,7 +37,6 @@ public class LectureService {
 	
 	public LectureDTO addLecture(Lecture lecture) {
 		lecture.setDate(LocalDateTime.now());
-		System.out.println(lecture.toString());
 		return lectureConverter.toDTOWithEntities(lectureRepository.save(lecture));
 	}
 	
@@ -46,8 +44,8 @@ public class LectureService {
 		return lectureConverter.toDTOWithEntities(lectureRepository.save(lecture));
 	}
 	
-	public void deleteLecture(Lecture lecture) {
-		lectureRepository.delete(lecture);
+	public void deleteLecture(Long id) {
+		lectureRepository.delete(id);
 	}
 
 }

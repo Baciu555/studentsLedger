@@ -20,7 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class LectureControllertests {
+public class LectureControllerTests {
 
 	@Autowired
 	private WebApplicationContext context;

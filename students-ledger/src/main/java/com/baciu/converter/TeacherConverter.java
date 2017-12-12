@@ -21,6 +21,7 @@ public class TeacherConverter {
 		teacherDTO.setName(teacher.getName());
 		teacherDTO.setSurname(teacher.getSurname());
 		teacherDTO.setSalary(teacher.getSalary());
+		teacherDTO.setEmail(teacher.getEmail());
 		
 		return teacherDTO;
 	}
@@ -31,6 +32,7 @@ public class TeacherConverter {
 		teacherDTO.setName(teacher.getName());
 		teacherDTO.setSurname(teacher.getSurname());
 		teacherDTO.setSalary(teacher.getSalary());
+		teacherDTO.setEmail(teacher.getEmail());
 		teacherDTO.setLectures(lectureConverter.toDTO(teacher.getLectures()));
 		
 		return teacherDTO;

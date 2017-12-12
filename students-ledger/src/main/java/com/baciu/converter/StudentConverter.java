@@ -14,6 +14,9 @@ public class StudentConverter {
 
 	@Autowired
 	private LectureConverter lectureConverter;
+	
+	@Autowired
+	private RoleConverter roleConverter;
 
 	public StudentDTO toDTO(Student student) {
 		StudentDTO studentDTO = new StudentDTO();
@@ -21,7 +24,9 @@ public class StudentConverter {
 		studentDTO.setName(student.getName());
 		studentDTO.setSurname(student.getSurname());
 		studentDTO.setEmail(student.getEmail());
+		studentDTO.setPassword(student.getPassword());
 		studentDTO.setCourse(student.getCourse());
+		studentDTO.setRoles(roleConverter.toDTO(student.getRoles()));
 
 		return studentDTO;
 	}
@@ -32,7 +37,9 @@ public class StudentConverter {
 		studentDTO.setName(student.getName());
 		studentDTO.setSurname(student.getSurname());
 		studentDTO.setEmail(student.getEmail());
+		studentDTO.setPassword(student.getPassword());
 		studentDTO.setCourse(student.getCourse());
+		studentDTO.setRoles(roleConverter.toDTO(student.getRoles()));
 		studentDTO.setLectures(lectureConverter.toDTO(student.getLectures()));
 
 		return studentDTO;
@@ -63,6 +70,7 @@ public class StudentConverter {
 		student.setSurname(studentDTO.getSurname());
 		student.setEmail(studentDTO.getEmail());
 		student.setCourse(studentDTO.getCourse());
+		//student.setRole(studentDTO.getRole());
 
 		return student;
 	}

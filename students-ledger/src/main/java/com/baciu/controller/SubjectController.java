@@ -2,11 +2,14 @@ package com.baciu.controller;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,16 +22,21 @@ import com.baciu.entity.Subject;
 import com.baciu.service.SubjectService;
 
 @RestController
+@CrossOrigin(origins="*")
 public class SubjectController {
+	
+	private final Logger LOG = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
 	private SubjectService subjectService;
 	
+	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("subjects")
 	public ResponseEntity<?> getSubjects() {
 		return new ResponseEntity<>(subjectService.getAll(), HttpStatus.OK);
 	}
 	
+	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("subjects/{id}")
 	public ResponseEntity<?> getSubject(@PathVariable("id") Long id) {
 		SubjectDTO subjectDTO = subjectService.getSubject(id);
@@ -38,6 +46,7 @@ public class SubjectController {
 		return new ResponseEntity<>(subjectDTO, HttpStatus.OK);
 	}
 	
+	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("subjects/{id}/lectures")
 	public ResponseEntity<?> getSubjectLectures(@PathVariable("id") Long id) {
 		SubjectDTO subjectDTO = subjectService.getSubjectLectures(id);
@@ -47,40 +56,43 @@ public class SubjectController {
 		return new ResponseEntity<>(subjectDTO, HttpStatus.OK);
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("subjects")
 	public ResponseEntity<?> addSubject(@Valid @RequestBody Subject subject, Errors errors) {
-		if (errors.hasErrors())
-			return new ResponseEntity<>(errors.getFieldError(), HttpStatus.BAD_REQUEST);
+		if (errors.hasErrors()) {
+			LOG.error("add subject failed", errors.getFieldError().getDefaultMessage());
+			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+		}
+			
 		
 		SubjectDTO subjectDTO = new SubjectDTO();
 		try {
 			subjectDTO = subjectService.addSubject(subject);
 		} catch (Exception e) {
+			LOG.error("add subject failed", e.getMessage());
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 		
+		LOG.info("subject added");
 		return new ResponseEntity<>(subjectDTO, HttpStatus.OK);
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("subjects")
 	public ResponseEntity<?> updateSubject(@Valid @RequestBody Subject subject, Errors errors) {
-		if (errors.hasErrors())
-			return new ResponseEntity<>(errors.getFieldError(), HttpStatus.BAD_REQUEST);
+		if (errors.hasErrors()) {
+			LOG.error("update subject failed", errors.getFieldError().getDefaultMessage());
+			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+		}
 		
 		SubjectDTO subjectDTO = subjectService.updateSubject(subject);
-		if (subjectDTO == null)
+		if (subjectDTO == null) {
+			LOG.error("update subject failed", "subject already exists");
 			return new ResponseEntity<>("subject already exists", HttpStatus.BAD_REQUEST);
-		
+		}
+			
+		LOG.info("subject updated");
 		return new ResponseEntity<>(subjectDTO, HttpStatus.OK);
-	}
-	
-	@DeleteMapping("subjects")
-	public ResponseEntity<?> deleteSubject(@Valid @RequestBody Subject subject, Errors errors) {
-		if (errors.hasErrors())
-			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
-		
-		subjectService.deleteSubject(subject);
-		return new ResponseEntity<>("subject deleted", HttpStatus.OK);
 	}
 
 }

@@ -30,7 +30,7 @@ public class Subject implements Serializable {
 	private Long id;
 	
 	@Column(nullable = false, unique = true)
-	@NotEmpty(message = "name cant be empty")
+	@NotEmpty(message = "name may not empty")
 	private String name;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "subject")

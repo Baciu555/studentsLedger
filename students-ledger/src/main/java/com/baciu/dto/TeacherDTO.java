@@ -11,6 +11,7 @@ public class TeacherDTO {
 	private String name;
 	private String surname;
 	private Double salary;
+	private String email;
 	private Set<LectureDTO> lectures;
 
 }

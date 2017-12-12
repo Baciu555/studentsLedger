@@ -13,7 +13,9 @@ public class StudentDTO implements Serializable {
 	private String name;
 	private String surname;
 	private String email;
+	private String password;
 	private String course;
+	private Set<RoleDTO> roles;
 	private Set<LectureDTO> lectures;
 
 }
