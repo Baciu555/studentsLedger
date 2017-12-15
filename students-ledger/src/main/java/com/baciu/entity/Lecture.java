@@ -1,7 +1,7 @@
 package com.baciu.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,7 +37,7 @@ public class Lecture implements Serializable {
 	
 	@Column(nullable = false)
 //	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime date;
+	private Date date;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "teacher_id", nullable = false)

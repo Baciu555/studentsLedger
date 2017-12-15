@@ -1,6 +1,6 @@
 package com.baciu.dto;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Set;
 
 import lombok.Data;
@@ -10,7 +10,7 @@ public class LectureDTO {
 	
 	private Long id;
 	private Long classNumber;
-	private LocalDateTime date;
+	private Date date;
 	private TeacherDTO teacher;
 	private SubjectDTO subject;
 	private Set<StudentDTO> students;
