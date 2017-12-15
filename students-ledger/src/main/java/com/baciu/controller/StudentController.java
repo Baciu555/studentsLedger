@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baciu.dto.StudentDTO;
 import com.baciu.entity.Student;
 import com.baciu.exception.EmailExistsException;
+import com.baciu.exception.StudentNotExistsException;
 import com.baciu.service.StudentService;
 
 @RestController
@@ -77,8 +78,9 @@ public class StudentController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("students/{id}")
-	public ResponseEntity<?> deleteStudent(@PathVariable Long id) {
+	public ResponseEntity<?> deleteStudent(@PathVariable Long id) throws StudentNotExistsException {
 		studentService.deleteStudent(id);
+		
 		LOG.info("user deleted");
 		return new ResponseEntity<>("user deleted", HttpStatus.OK);
 	}

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baciu.dto.LectureDTO;
 import com.baciu.entity.Lecture;
+import com.baciu.exception.LectureNotExistsException;
 import com.baciu.service.LectureService;
 
 @RestController
@@ -55,20 +56,8 @@ public class LectureController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("lectures")
-	public ResponseEntity<?> addLecture(@Valid @RequestBody Lecture lecture, Errors errors) {
-		if (errors.hasErrors()) {
-			LOG.error("add lecture failed", errors.getFieldError().getDefaultMessage());
-			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
-		}
-			
-		
-		LectureDTO lectureDTO = new LectureDTO();
-		try {
-			lectureDTO = lectureService.addLecture(lecture);
-		} catch (Exception e) {
-			LOG.error("add lecture failed", e.getMessage());
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<?> addLecture(@Valid @RequestBody Lecture lecture) {
+		LectureDTO lectureDTO = lectureService.addLecture(lecture);
 		
 		LOG.info("lecture added");
 		return new ResponseEntity<>(lectureDTO, HttpStatus.OK);
@@ -76,27 +65,18 @@ public class LectureController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("lectures")
-	public ResponseEntity<?> updateLecture(@Valid @RequestBody Lecture lecture, Errors errors) {
-		if (errors.hasErrors()) {
-			LOG.error("update lecture failed", errors.getFieldError().getDefaultMessage());
-			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
-		}
-			
+	public ResponseEntity<?> updateLecture(@Valid @RequestBody Lecture lecture) {	
 		LectureDTO lectureDTO = lectureService.updateLecture(lecture);
-		if (lectureDTO == null) {
-			LOG.error("update lecture failed", "lecture already exists");
-			return new ResponseEntity<>("lecture already exists", HttpStatus.BAD_REQUEST);
-		}
-			
-		
+
 		LOG.info("lecture updated");
 		return new ResponseEntity<>(lectureDTO, HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("lectures/{id}")
-	public ResponseEntity<?> deleteLecture(@PathVariable Long id) {
+	public ResponseEntity<?> deleteLecture(@PathVariable Long id) throws LectureNotExistsException {
 		lectureService.deleteLecture(id);
+		
 		LOG.info("lecture deleted");
 		return new ResponseEntity<>("lecture deleted", HttpStatus.OK);
 	}

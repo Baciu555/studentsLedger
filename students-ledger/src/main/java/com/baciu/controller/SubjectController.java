@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baciu.dto.SubjectDTO;
 import com.baciu.entity.Subject;
+import com.baciu.exception.SubjectExistsException;
 import com.baciu.service.SubjectService;
 
 @RestController
@@ -58,20 +59,8 @@ public class SubjectController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("subjects")
-	public ResponseEntity<?> addSubject(@Valid @RequestBody Subject subject, Errors errors) {
-		if (errors.hasErrors()) {
-			LOG.error("add subject failed", errors.getFieldError().getDefaultMessage());
-			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
-		}
-			
-		
-		SubjectDTO subjectDTO = new SubjectDTO();
-		try {
-			subjectDTO = subjectService.addSubject(subject);
-		} catch (Exception e) {
-			LOG.error("add subject failed", e.getMessage());
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<?> addSubject(@Valid @RequestBody Subject subject) throws SubjectExistsException {
+		SubjectDTO subjectDTO = subjectService.addSubject(subject);
 		
 		LOG.info("subject added");
 		return new ResponseEntity<>(subjectDTO, HttpStatus.OK);
@@ -79,18 +68,9 @@ public class SubjectController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("subjects")
-	public ResponseEntity<?> updateSubject(@Valid @RequestBody Subject subject, Errors errors) {
-		if (errors.hasErrors()) {
-			LOG.error("update subject failed", errors.getFieldError().getDefaultMessage());
-			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
-		}
-		
+	public ResponseEntity<?> updateSubject(@Valid @RequestBody Subject subject) throws SubjectExistsException {
 		SubjectDTO subjectDTO = subjectService.updateSubject(subject);
-		if (subjectDTO == null) {
-			LOG.error("update subject failed", "subject already exists");
-			return new ResponseEntity<>("subject already exists", HttpStatus.BAD_REQUEST);
-		}
-			
+		
 		LOG.info("subject updated");
 		return new ResponseEntity<>(subjectDTO, HttpStatus.OK);
 	}
