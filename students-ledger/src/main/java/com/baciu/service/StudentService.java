@@ -11,6 +11,7 @@ import com.baciu.dto.StudentDTO;
 import com.baciu.entity.Role;
 import com.baciu.entity.Student;
 import com.baciu.exception.EmailExistsException;
+import com.baciu.exception.StudentNotExistsException;
 import com.baciu.repository.StudentRepository;
 import com.baciu.validation.FieldValidator;
 
@@ -64,7 +65,9 @@ public class StudentService {
 		return studentConverter.toDTO(studentRepository.save(student));
 	}
 	
-	public void deleteStudent(Long id) {
+	public void deleteStudent(Long id) throws StudentNotExistsException {
+		Student student = studentRepository.findOne(id);
+		if (student == null) throw new StudentNotExistsException();
 		studentRepository.delete(id);
 	}
 

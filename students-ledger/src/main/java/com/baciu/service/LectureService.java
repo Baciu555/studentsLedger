@@ -1,6 +1,6 @@
 package com.baciu.service;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.baciu.converter.LectureConverter;
 import com.baciu.dto.LectureDTO;
 import com.baciu.entity.Lecture;
+import com.baciu.exception.LectureNotExistsException;
 import com.baciu.repository.LectureRepository;
 
 @Service
@@ -36,7 +37,7 @@ public class LectureService {
 	}
 	
 	public LectureDTO addLecture(Lecture lecture) {
-		lecture.setDate(LocalDateTime.now());
+		lecture.setDate(new Date());
 		return lectureConverter.toDTOWithEntities(lectureRepository.save(lecture));
 	}
 	
@@ -44,7 +45,10 @@ public class LectureService {
 		return lectureConverter.toDTOWithEntities(lectureRepository.save(lecture));
 	}
 	
-	public void deleteLecture(Long id) {
+	public void deleteLecture(Long id) throws LectureNotExistsException {
+		if (lectureRepository.findOne(id) == null)
+			throw new LectureNotExistsException();
+		
 		lectureRepository.delete(id);
 	}
 

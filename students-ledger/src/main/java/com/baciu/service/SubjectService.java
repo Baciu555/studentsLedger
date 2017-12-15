@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.baciu.converter.SubjectConverter;
 import com.baciu.dto.SubjectDTO;
 import com.baciu.entity.Subject;
+import com.baciu.exception.SubjectExistsException;
+import com.baciu.exception.SubjectNotExistsException;
 import com.baciu.repository.SubjectRepository;
 
 @Service
@@ -37,25 +39,25 @@ public class SubjectService {
 		return subjectConverter.toDTOLectures(subjectRepository.findOne(id));
 	}
 	
-	public SubjectDTO addSubject(Subject subject) throws Exception {
-		if (subjectRepository.findOne(subject.getId()) != null)
-			throw new Exception("subject already exists");
-		
+	public SubjectDTO addSubject(Subject subject) throws SubjectExistsException {
 		if (subjectRepository.findByName(subject.getName()) != null)
-			throw new Exception("subject already exists");
+			throw new SubjectExistsException();
 		
 		return subjectConverter.toDTO(subjectRepository.save(subject));
 	}
 	
-	public SubjectDTO updateSubject(Subject subject) {
+	public SubjectDTO updateSubject(Subject subject) throws SubjectExistsException {
 		if (subjectRepository.findByName(subject.getName()) != null)
-			return null;
+			throw new SubjectExistsException();
 		
 		return subjectConverter.toDTO(subjectRepository.save(subject));
 	}
 	
-	public void deleteSubject(Subject subject) {
-		subjectRepository.delete(subject);
+	public void deleteSubject(Long id) throws SubjectNotExistsException {
+		if (subjectRepository.findOne(id) == null)
+			throw new SubjectNotExistsException();
+		
+		subjectRepository.delete(id);
 	}
 
 }
