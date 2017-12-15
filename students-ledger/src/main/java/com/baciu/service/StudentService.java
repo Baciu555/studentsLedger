@@ -10,6 +10,7 @@ import com.baciu.converter.StudentConverter;
 import com.baciu.dto.StudentDTO;
 import com.baciu.entity.Role;
 import com.baciu.entity.Student;
+import com.baciu.exception.EmailExistsException;
 import com.baciu.repository.StudentRepository;
 import com.baciu.validation.FieldValidator;
 
@@ -39,15 +40,9 @@ public class StudentService {
 		return studentConverter.toDTOLectures(studentRepository.findOne(id));
 	}
 	
-	public StudentDTO addStudent(Student student) throws Exception {
-		if (!fieldValidator.validatePassword(student.getPassword()))
-			throw new Exception("wrong password [min 3 chars, max 50 chars]");
-		
-		if (studentRepository.findOne(student.getId()) != null)
-			throw new Exception("student already exists");
-		
+	public StudentDTO addStudent(Student student) throws EmailExistsException {
 		if (studentRepository.findByEmail(student.getEmail()) != null)
-			throw new Exception("email already exists");
+			throw new EmailExistsException();
 		
 		Role role = new Role();
 		role.setId(1L);
@@ -58,17 +53,15 @@ public class StudentService {
 		return studentConverter.toDTO(studentRepository.save(student));
 	}
 
-	public StudentDTO updateStudent(Student student) {
+	public StudentDTO updateStudent(Student student) throws EmailExistsException {
 		Student existedStudent = studentRepository.findOne(student.getId());
 		student.setPassword(existedStudent.getPassword());
 		
-		if (studentRepository.findByEmail(student.getEmail()) != null && student.getEmail().equals(existedStudent.getEmail())) {
-			return studentConverter.toDTO(studentRepository.save(student));
-		} else if (studentRepository.findByEmail(student.getEmail()) == null) {
-			return studentConverter.toDTO(studentRepository.save(student));
-		}
+		if (studentRepository.findByEmail(student.getEmail()) != null
+				&& !student.getEmail().equals(existedStudent.getEmail()))
+			throw new EmailExistsException();
 			
-		return null;
+		return studentConverter.toDTO(studentRepository.save(student));
 	}
 	
 	public void deleteStudent(Long id) {

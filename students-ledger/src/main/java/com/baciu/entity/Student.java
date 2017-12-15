@@ -56,6 +56,10 @@ public class Student implements Serializable {
 	@NotEmpty(message = "course may not be empty")
 	private String course;
 	
+	@Length.List({
+	    @Length(min = 3, message = "password too short (min 3 chars)"),
+	    @Length(max = 30, message = "password too long (max 30 chars)")
+	})
 	@Column(nullable = false)
 	private String password;
 	
