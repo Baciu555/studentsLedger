@@ -59,12 +59,7 @@ public class StudentController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("students")
-	public ResponseEntity<?> addStudent(@Valid @RequestBody Student student, Errors errors) {
-		if (errors.hasErrors()) {
-			LOG.error("add student failed", errors.getFieldError().getDefaultMessage());
-			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
-		}
-		
+	public ResponseEntity<?> addStudent(@Valid @RequestBody Student student) {
 		StudentDTO studentDTO = new StudentDTO();
 		try {
 			studentDTO = studentService.addStudent(student);
@@ -73,19 +68,13 @@ public class StudentController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 		
-		LOG.error("student added");
+		LOG.info("student added");
 		return new ResponseEntity<>(studentDTO, HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@PutMapping("students")
-	public ResponseEntity<?> updateStudent(@Valid @RequestBody Student student, Errors errors) {
-		if (errors.hasErrors()) {
-			LOG.error("update student failed", errors.getFieldError().getDefaultMessage());
-			return new ResponseEntity<>(errors.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
-		}
-			
-		
+	public ResponseEntity<?> updateStudent(@Valid @RequestBody Student student) {
 		StudentDTO studentDTO = studentService.updateStudent(student);
 		if (studentDTO == null) {
 			LOG.error("update student failed, email already exists");
