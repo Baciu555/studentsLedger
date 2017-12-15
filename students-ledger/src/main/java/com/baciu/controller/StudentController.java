@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baciu.dto.StudentDTO;
 import com.baciu.entity.Student;
+import com.baciu.exception.EmailExistsException;
 import com.baciu.service.StudentService;
 
 @RestController
@@ -59,14 +59,8 @@ public class StudentController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("students")
-	public ResponseEntity<?> addStudent(@Valid @RequestBody Student student) {
-		StudentDTO studentDTO = new StudentDTO();
-		try {
-			studentDTO = studentService.addStudent(student);
-		} catch (Exception e) {
-			LOG.error("add student failed", e.getMessage());
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<?> addStudent(@Valid @RequestBody Student student) throws EmailExistsException {
+		StudentDTO studentDTO = studentService.addStudent(student);
 		
 		LOG.info("student added");
 		return new ResponseEntity<>(studentDTO, HttpStatus.OK);
@@ -74,12 +68,8 @@ public class StudentController {
 	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@PutMapping("students")
-	public ResponseEntity<?> updateStudent(@Valid @RequestBody Student student) {
+	public ResponseEntity<?> updateStudent(@Valid @RequestBody Student student) throws EmailExistsException {
 		StudentDTO studentDTO = studentService.updateStudent(student);
-		if (studentDTO == null) {
-			LOG.error("update student failed, email already exists");
-			return new ResponseEntity<>("email already exists", HttpStatus.BAD_REQUEST);
-		}
 			
 		LOG.info("student updated");
 		return new ResponseEntity<>(studentDTO, HttpStatus.OK);
