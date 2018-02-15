@@ -5,8 +5,6 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baciu.converter.TeacherConverter;
-import com.baciu.dto.TeacherDTO;
 import com.baciu.entity.Teacher;
 import com.baciu.exception.EmailExistsException;
 import com.baciu.exception.TeacherNotExistsException;
@@ -20,37 +18,34 @@ public class TeacherService {
 	private TeacherRepository teacherRepository;
 	
 	@Autowired
-	private TeacherConverter teacherConverter;
-	
-	@Autowired
 	private FieldValidator fieldValidator;
 	
-	public Set<TeacherDTO> getAll() {
-		return teacherConverter.toDTO(teacherRepository.findAll());
+	public Set<Teacher> getAll() {
+		return (Set<Teacher>) teacherRepository.findAll();
 	}
 	
-	public TeacherDTO getTeacher(Long id) {
+	public Teacher getTeacher(Long id) {
 		if (!teacherRepository.exists(id))
 			return null;
 		
-		return teacherConverter.toDTO(teacherRepository.findOne(id));
+		return teacherRepository.findOne(id);
 	}
 	
-	public TeacherDTO getTeacherLectures(Long id) {
+	public Teacher getTeacherLectures(Long id) {
 		if (!teacherRepository.exists(id))
 			return null;
 		
-		return teacherConverter.toDTOLectures(teacherRepository.findOne(id));
+		return teacherRepository.findOne(id);
 	}
 	
-	public TeacherDTO addTeacher(Teacher teacher) throws EmailExistsException {
+	public Teacher addTeacher(Teacher teacher) throws EmailExistsException {
 		if (teacherRepository.findByEmail(teacher.getEmail()) != null)
 			throw new EmailExistsException();
 		
-		return teacherConverter.toDTO(teacherRepository.save(teacher));
+		return teacherRepository.save(teacher);
 	}
 	
-	public TeacherDTO updateTeacher(Teacher teacher) throws EmailExistsException {
+	public Teacher updateTeacher(Teacher teacher) throws EmailExistsException {
 		Teacher existedTeacher = teacherRepository.findOne(teacher.getId());
 		teacher.setPassword(existedTeacher.getPassword());
 		
@@ -58,7 +53,7 @@ public class TeacherService {
 				&& !teacher.getEmail().equals(existedTeacher.getEmail()))
 			throw new EmailExistsException();
 		
-		return teacherConverter.toDTO(teacherRepository.save(teacher));
+		return teacherRepository.save(teacher);
 	}
 	
 	public void deleteTeacher(Long id) throws TeacherNotExistsException {

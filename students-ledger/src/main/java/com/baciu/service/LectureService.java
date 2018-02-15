@@ -6,8 +6,6 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baciu.converter.LectureConverter;
-import com.baciu.dto.LectureDTO;
 import com.baciu.entity.Lecture;
 import com.baciu.exception.LectureNotExistsException;
 import com.baciu.repository.LectureRepository;
@@ -18,31 +16,28 @@ public class LectureService {
 	@Autowired
 	private LectureRepository lectureRepository;
 	
-	@Autowired
-	private LectureConverter lectureConverter;
-	
-	public Set<LectureDTO> getAll() {
-		return lectureConverter.toDTO(lectureRepository.findAll());
+	public Set<Lecture> getAll() {
+		return (Set<Lecture>) lectureRepository.findAll();
 	}
 	
-	public LectureDTO getLecture(Long id) {
+	public Lecture getLecture(Long id) {
 		if (!lectureRepository.exists(id))
 			return null;
 		
-		return lectureConverter.toDTOWithEntities(lectureRepository.findOne(id));
+		return lectureRepository.findOne(id);
 	}
 	
-	public Set<LectureDTO> getAllWithSubjects() {
-		return lectureConverter.toDTOWithSubjects(lectureRepository.findAll());
+	public Set<Lecture> getAllWithSubjects() {
+		return (Set<Lecture>) lectureRepository.findAll();
 	}
 	
-	public LectureDTO addLecture(Lecture lecture) {
+	public Lecture addLecture(Lecture lecture) {
 		lecture.setDate(new Date());
-		return lectureConverter.toDTOWithEntities(lectureRepository.save(lecture));
+		return lectureRepository.save(lecture);
 	}
 	
-	public LectureDTO updateLecture(Lecture lecture) {
-		return lectureConverter.toDTOWithEntities(lectureRepository.save(lecture));
+	public Lecture updateLecture(Lecture lecture) {
+		return lectureRepository.save(lecture);
 	}
 	
 	public void deleteLecture(Long id) throws LectureNotExistsException {

@@ -2,6 +2,7 @@ package com.baciu.controller;
 
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class TeacherController {
 	@Autowired
 	private TeacherService teacherService;
 	
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("teachers")
 	public ResponseEntity<?> getTeachers() {
@@ -39,38 +43,38 @@ public class TeacherController {
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("teachers/{id}")
 	public ResponseEntity<?> getTeacher(@PathVariable("id") Long id) {
-		TeacherDTO teacherDTO = teacherService.getTeacher(id);
-		if (teacherDTO == null)
+		Teacher teacher = teacherService.getTeacher(id);
+		if (teacher == null)
 			return new ResponseEntity<>("teacher not found", HttpStatus.BAD_REQUEST);
 		
-		return new ResponseEntity<>(teacherDTO, HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(teacher, Teacher.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("teachers/{id}/lectures")
 	public ResponseEntity<?> getTeacherLectures(@PathVariable("id") Long id) {
-		TeacherDTO teacherDTO = teacherService.getTeacherLectures(id);
-		if (teacherDTO == null)
+		Teacher teacher = teacherService.getTeacherLectures(id);
+		if (teacher == null)
 			return new ResponseEntity<>("teacher not found", HttpStatus.BAD_REQUEST);
 		
-		return new ResponseEntity<>(teacherDTO, HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(teacher, TeacherDTO.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("teachers")
-	public ResponseEntity<?> addTeacher(@Valid @RequestBody Teacher teacher) throws EmailExistsException {
-		TeacherDTO teacherDTO = teacherService.addTeacher(teacher);
+	public ResponseEntity<?> addTeacher(@Valid @RequestBody TeacherDTO teacherDTO) throws EmailExistsException {
+		Teacher teacher = teacherService.addTeacher(modelMapper.map(teacherDTO, Teacher.class));
 		
 		LOG.info("teacher added");
-		return new ResponseEntity<>(teacherDTO, HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(teacher, TeacherDTO.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("teachers")
-	public ResponseEntity<?> updateTeacher(@Valid @RequestBody Teacher teacher) throws EmailExistsException {
-		TeacherDTO teacherDTO = teacherService.updateTeacher(teacher);
+	public ResponseEntity<?> updateTeacher(@Valid @RequestBody TeacherDTO teacherDTO) throws EmailExistsException {
+		Teacher teacher = teacherService.updateTeacher(modelMapper.map(teacherDTO, Teacher.class));
 			
 		LOG.info("teacher updated");
-		return new ResponseEntity<>(teacherDTO, HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(teacher, TeacherDTO.class), HttpStatus.OK);
 	}
 }

@@ -7,29 +7,34 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
-import com.baciu.service.CustomDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	@Autowired
-	private CustomDetailsService customDetailsService;
+//	@Autowired
+//	private CustomDetailsService customDetailsService;
 	
 	@Autowired
-	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(customDetailsService);
+	public void coinfigureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication().withUser("baciu").password("123").roles("ADMIN");
+		auth.inMemoryAuthentication().withUser("krasnal").password("321").roles("USER");
 	}
+	
+//	@Autowired
+//	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+//		auth.userDetailsService(customDetailsService);
+//	}
 	
 	@Override
 	 protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable()
 		.authorizeRequests()
-	   	.anyRequest().permitAll()
-	   	.and()
-	   	.httpBasic();
+	   	.antMatchers("/students/**").hasRole("ADMIN")
+	   	.and().httpBasic()
+	   	.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	 }
 
 }

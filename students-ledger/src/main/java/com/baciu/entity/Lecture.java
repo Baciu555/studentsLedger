@@ -14,7 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,11 +33,10 @@ public class Lecture implements Serializable {
 	private Long id;
 	
 	@Column(nullable = false)
-	@NotNull(message = "class number may not be null")
 	private Long classNumber;
 	
 	@Column(nullable = false)
-//	@Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

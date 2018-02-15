@@ -18,43 +18,46 @@ import com.baciu.validation.FieldValidator;
 @Service
 public class StudentService {
 	
+	private Long DEFAULT_ROLE_ID = 1L;
+	
 	@Autowired
 	private StudentRepository studentRepository;
 	
 	@Autowired
-	private StudentConverter studentConverter;
-	
-	@Autowired
 	private FieldValidator fieldValidator;
 	
-	public StudentDTO getStudent(Long id) {
+	public Student getStudent(Long id) {
 		if (!studentRepository.exists(id))
 			return null;
 		
-		return studentConverter.toDTO(studentRepository.findOne(id));
+		return studentRepository.findOne(id);
 	}
 	
-	public StudentDTO getStudentLectures(Long id) {
+	public Student getStudentLectures(Long id) {
 		if (!studentRepository.exists(id))
 			return null;
 		
-		return studentConverter.toDTOLectures(studentRepository.findOne(id));
+		return studentRepository.findOne(id);
 	}
 	
-	public StudentDTO addStudent(Student student) throws EmailExistsException {
+	public Student addStudent(Student student) throws EmailExistsException {
 		if (studentRepository.findByEmail(student.getEmail()) != null)
 			throw new EmailExistsException();
 		
+		student.setRoles(createDefaultRole());
+		
+		return studentRepository.save(student);
+	}
+	
+	private Set<Role> createDefaultRole() {
 		Role role = new Role();
-		role.setId(1L);
+		role.setId(DEFAULT_ROLE_ID);
 		Set<Role> roles = new HashSet<>();
 		roles.add(role);
-		student.setRoles(roles);
-		
-		return studentConverter.toDTO(studentRepository.save(student));
+		return roles;
 	}
 
-	public StudentDTO updateStudent(Student student) throws EmailExistsException {
+	public Student updateStudent(Student student) throws EmailExistsException {
 		Student existedStudent = studentRepository.findOne(student.getId());
 		student.setPassword(existedStudent.getPassword());
 		
@@ -62,7 +65,7 @@ public class StudentService {
 				&& !student.getEmail().equals(existedStudent.getEmail()))
 			throw new EmailExistsException();
 			
-		return studentConverter.toDTO(studentRepository.save(student));
+		return studentRepository.save(student);
 	}
 	
 	public void deleteStudent(Long id) throws StudentNotExistsException {
@@ -71,13 +74,13 @@ public class StudentService {
 		studentRepository.delete(id);
 	}
 
-	public Set<StudentDTO> getAll() {
-		return studentConverter.toDTO(studentRepository.findAll());
+	public Iterable<Student> getAll() {
+		return studentRepository.findAll();
 	}
 	
-	public StudentDTO getByEmail(String email) {
+	public Student getByEmail(String email) {
 		Student student = studentRepository.findByEmail(email);
-		return student == null ? null : studentConverter.toDTO(student);
+		return student == null ? null : student;
 	}
 
 }

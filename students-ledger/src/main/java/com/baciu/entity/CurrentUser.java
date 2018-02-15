@@ -7,15 +7,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.baciu.dto.StudentDTO;
-
 public class CurrentUser implements UserDetails {
 
 	
 	private static final long serialVersionUID = 1L;
-	private StudentDTO user;
+	private Student user;
 
-	public CurrentUser(StudentDTO student) {
+	public CurrentUser(Student student) {
 		this.user = student;
 	}
 

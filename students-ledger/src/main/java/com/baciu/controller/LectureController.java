@@ -2,13 +2,13 @@ package com.baciu.controller;
 
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +32,9 @@ public class LectureController {
 	@Autowired
 	private LectureService lectureService;
 	
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("lectures")
 	public ResponseEntity<?> getLectures() {
@@ -47,29 +50,29 @@ public class LectureController {
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("lectures/{id}")
 	public ResponseEntity<?> getLecture(@PathVariable("id") Long id) {
-		LectureDTO lectureDTO = lectureService.getLecture(id);
-		if (lectureDTO == null)
+		Lecture lecture = lectureService.getLecture(id);
+		if (lecture == null)
 			return new ResponseEntity<>("lecture not found", HttpStatus.BAD_REQUEST);
 		
-		return new ResponseEntity<>(lectureDTO, HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(lecture, LectureDTO.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("lectures")
-	public ResponseEntity<?> addLecture(@Valid @RequestBody Lecture lecture) {
-		LectureDTO lectureDTO = lectureService.addLecture(lecture);
+	public ResponseEntity<?> addLecture(@Valid @RequestBody LectureDTO lectureDTO) {
+		Lecture lecture = lectureService.addLecture(modelMapper.map(lectureDTO, Lecture.class));
 		
 		LOG.info("lecture added");
-		return new ResponseEntity<>(lectureDTO, HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(lecture, Lecture.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("lectures")
-	public ResponseEntity<?> updateLecture(@Valid @RequestBody Lecture lecture) {	
-		LectureDTO lectureDTO = lectureService.updateLecture(lecture);
+	public ResponseEntity<?> updateLecture(@Valid @RequestBody LectureDTO lectureDTO) {	
+		Lecture lecture = lectureService.updateLecture(modelMapper.map(lectureDTO, Lecture.class));
 
 		LOG.info("lecture updated");
-		return new ResponseEntity<>(lectureDTO, HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(lecture, Lecture.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")

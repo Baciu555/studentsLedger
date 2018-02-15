@@ -14,10 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -34,32 +30,17 @@ public class Student implements Serializable {
 	private Long id;
 	
 	@Column(nullable = false)
-	@Length.List({
-	    @Length(min = 3, message = "name too short (min 3 chars)"),
-	    @Length(max = 30, message = "name too long (max 30 chars)")
-	})
 	private String name;
 	
 	@Column(nullable = false)
-	@Length.List({
-	    @Length(min = 3, message = "surname too short (min 3 chars)"),
-	    @Length(max = 30, message = "surname too long (max 30 chars)")
-	})
 	private String surname;
 	
 	@Column(nullable = false, unique = true)
-	@NotEmpty(message = "email may not be empty")
-	@Email
 	private String email;
 	
 	@Column(nullable = false)
-	@NotEmpty(message = "course may not be empty")
 	private String course;
 	
-	@Length.List({
-	    @Length(min = 3, message = "password too short (min 3 chars)"),
-	    @Length(max = 30, message = "password too long (max 30 chars)")
-	})
 	@Column(nullable = false)
 	private String password;
 	

@@ -12,8 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,7 +28,6 @@ public class Subject implements Serializable {
 	private Long id;
 	
 	@Column(nullable = false, unique = true)
-	@NotEmpty(message = "name may not empty")
 	private String name;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "subject")

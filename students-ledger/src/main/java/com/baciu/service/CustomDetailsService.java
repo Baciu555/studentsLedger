@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.baciu.dto.StudentDTO;
 import com.baciu.entity.CurrentUser;
+import com.baciu.entity.Student;
 
 @Service
 public class CustomDetailsService implements UserDetailsService {
@@ -16,7 +16,7 @@ public class CustomDetailsService implements UserDetailsService {
 	
 	@Override
 	public CurrentUser loadUserByUsername(String email) throws UsernameNotFoundException {
-		StudentDTO student = studentService.getByEmail(email);
+		Student student = studentService.getByEmail(email);
 		
 		if (student == null) {
 			throw new UsernameNotFoundException("student not found");

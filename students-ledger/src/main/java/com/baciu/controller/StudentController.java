@@ -1,7 +1,11 @@
 package com.baciu.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,8 @@ import com.baciu.exception.EmailExistsException;
 import com.baciu.exception.StudentNotExistsException;
 import com.baciu.service.StudentService;
 
+import aj.org.objectweb.asm.Type;
+
 @RestController
 @CrossOrigin(origins="*")
 public class StudentController {
@@ -32,48 +38,51 @@ public class StudentController {
 	@Autowired
 	private StudentService studentService;
 	
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("students")
 	public ResponseEntity<?> getAll() {
-		return new ResponseEntity<>(studentService.getAll(), HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(studentService.getAll(), Student.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("students/{id}")
 	public ResponseEntity<?> getStudent(@PathVariable("id") Long id) {
-		StudentDTO studentDTO = studentService.getStudent(id);
-		if (studentDTO == null)
+		Student student = studentService.getStudent(id);
+		if (student == null)
 			return new ResponseEntity<>("student not found", HttpStatus.BAD_REQUEST);
 		
-		return new ResponseEntity<>(studentDTO, HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(student, StudentDTO.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("students/{id}/lectures")
 	public ResponseEntity<?> getStudentLectures(@PathVariable("id") Long id) {
-		StudentDTO studentDTO = studentService.getStudentLectures(id);
-		if (studentDTO == null)
+		Student student = studentService.getStudentLectures(id);
+		if (student == null)
 			return new ResponseEntity<>("student not found", HttpStatus.BAD_REQUEST);
 		
-		return new ResponseEntity<>(studentDTO, HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(student, StudentDTO.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("students")
-	public ResponseEntity<?> addStudent(@Valid @RequestBody Student student) throws EmailExistsException {
-		StudentDTO studentDTO = studentService.addStudent(student);
+	public ResponseEntity<?> addStudent(@Valid @RequestBody StudentDTO studentDTO) throws EmailExistsException {
+		Student student = studentService.addStudent(modelMapper.map(studentDTO, Student.class));
 		
 		LOG.info("student added");
-		return new ResponseEntity<>(studentDTO, HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(student, StudentDTO.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@PutMapping("students")
-	public ResponseEntity<?> updateStudent(@Valid @RequestBody Student student) throws EmailExistsException {
-		StudentDTO studentDTO = studentService.updateStudent(student);
+	public ResponseEntity<?> updateStudent(@Valid @RequestBody StudentDTO studentDTO) throws EmailExistsException {
+		Student student = studentService.updateStudent(modelMapper.map(studentDTO, Student.class));
 			
 		LOG.info("student updated");
-		return new ResponseEntity<>(studentDTO, HttpStatus.OK);
+		return new ResponseEntity<>(modelMapper.map(student, StudentDTO.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -89,7 +98,7 @@ public class StudentController {
 	@PostMapping("login")
 	public ResponseEntity<?> login() {
 		LOG.info("user logged");
-		return new ResponseEntity<>("logged", HttpStatus.OK);
+		return new ResponseEntity<>("{\"response\":\"OK\"}", HttpStatus.OK);
 	}
 
 }
