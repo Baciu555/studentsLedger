@@ -1,47 +1,33 @@
 package com.baciu.entity;
 
-import javax.persistence.Column;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
-
+import lombok.Builder;
 import lombok.Data;
 
-@Data
 @Entity
-public class Administrator {
+@Data
+@Builder
+public class Administrator extends User {
+
+	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(updatable = false, unique = true, nullable = false)
-	private Long id;
+	@Builder
+	public Administrator(Long id, String name, String surname, String password, String email) {
+		super(id, name, surname, password, email);
+	}
 	
-	@Column(nullable = false)
-	@Length.List({
-	    @Length(min = 3, message = "name too short (min 3 chars)"),
-	    @Length(max = 30, message = "name too long (max 30 chars)")
-	})
-	private String name;
-	
-	@Column(nullable = false)
-	@Length.List({
-	    @Length(min = 3, message = "surname too short (min 3 chars)"),
-	    @Length(max = 30, message = "surname too long (max 30 chars)")
-	})
-	private String surname;
-	
-	@Column(nullable = false, unique = true)
-	@Email
-	@NotEmpty
-	private String email;
-	
-	@Column(nullable = false)
-	@Length(min = 5, message = "password too short (min 5 chars)")
-	private String password;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "administrator_role", joinColumns = {
+			@JoinColumn(name = "administrator_id")},
+			inverseJoinColumns = {@JoinColumn(name = "role_id")})
+	protected Set<Role> roles = new HashSet<>(0);
 
 }

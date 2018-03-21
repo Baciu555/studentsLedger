@@ -4,10 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.baciu.converter.StudentConverter;
-import com.baciu.dto.StudentDTO;
 import com.baciu.entity.Role;
 import com.baciu.entity.Student;
 import com.baciu.exception.EmailExistsException;
@@ -22,6 +21,9 @@ public class StudentService {
 	
 	@Autowired
 	private StudentRepository studentRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private FieldValidator fieldValidator;
@@ -44,6 +46,7 @@ public class StudentService {
 		if (studentRepository.findByEmail(student.getEmail()) != null)
 			throw new EmailExistsException();
 		
+		student.setPassword(passwordEncoder.encode(student.getPassword()));
 		student.setRoles(createDefaultRole());
 		
 		return studentRepository.save(student);
@@ -59,13 +62,18 @@ public class StudentService {
 
 	public Student updateStudent(Student student) throws EmailExistsException {
 		Student existedStudent = studentRepository.findOne(student.getId());
-		student.setPassword(existedStudent.getPassword());
 		
 		if (studentRepository.findByEmail(student.getEmail()) != null
 				&& !student.getEmail().equals(existedStudent.getEmail()))
 			throw new EmailExistsException();
+		
+		existedStudent.setName(student.getName());
+		existedStudent.setSurname(student.getSurname());
+		existedStudent.setEmail(student.getEmail());
+		existedStudent.setPassword(passwordEncoder.encode(student.getPassword()));
+		existedStudent.setCourse(student.getCourse());
 			
-		return studentRepository.save(student);
+		return studentRepository.save(existedStudent);
 	}
 	
 	public void deleteStudent(Long id) throws StudentNotExistsException {

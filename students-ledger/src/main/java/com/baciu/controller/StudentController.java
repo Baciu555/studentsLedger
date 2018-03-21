@@ -1,11 +1,11 @@
 package com.baciu.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +21,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baciu.converter.StudentConverter;
 import com.baciu.dto.StudentDTO;
 import com.baciu.entity.Student;
 import com.baciu.exception.EmailExistsException;
 import com.baciu.exception.StudentNotExistsException;
 import com.baciu.service.StudentService;
-
-import aj.org.objectweb.asm.Type;
 
 @RestController
 @CrossOrigin(origins="*")
@@ -41,10 +40,15 @@ public class StudentController {
 	@Autowired
 	private ModelMapper modelMapper;
 	
+	@Autowired
+	private StudentConverter studentConverter;
+	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("students")
 	public ResponseEntity<?> getAll() {
-		return new ResponseEntity<>(modelMapper.map(studentService.getAll(), Student.class), HttpStatus.OK);
+		Iterable<Student> students = studentService.getAll();
+		
+		return new ResponseEntity<>(studentConverter.toDTO(students), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
@@ -54,7 +58,7 @@ public class StudentController {
 		if (student == null)
 			return new ResponseEntity<>("student not found", HttpStatus.BAD_REQUEST);
 		
-		return new ResponseEntity<>(modelMapper.map(student, StudentDTO.class), HttpStatus.OK);
+		return new ResponseEntity<>(studentConverter.toDTO(student), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")

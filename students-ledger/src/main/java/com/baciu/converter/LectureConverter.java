@@ -1,79 +1,83 @@
 package com.baciu.converter;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
 
 import com.baciu.dto.LectureDTO;
+import com.baciu.dto.StudentDTO;
+import com.baciu.dto.TeacherDTO;
 import com.baciu.entity.Lecture;
+import com.baciu.entity.Student;
+import com.baciu.entity.Teacher;
 
-@Service
-public class LectureConverter {
+public class LectureConverter implements SimpleConverter<Lecture, LectureDTO> {
 
-	@Autowired
-	private SubjectConverter subjectConverter;
-
-	@Autowired
-	private TeacherConverter teacherConverter;
-
-	@Autowired
-	private StudentConverter studentConverter;
-
-	public Set<LectureDTO> toDTO(Iterable<Lecture> lectures) {
-		Set<LectureDTO> lecturesDTO = new HashSet<>();
-
-		for (Lecture lecture : lectures)
-			lecturesDTO.add(toDTO(lecture));
-
-		return lecturesDTO;
-	}
-
-	public Set<LectureDTO> toDTO(Set<Lecture> lectures) {
-		Set<LectureDTO> lecturesDTO = new HashSet<>();
-
-		for (Lecture lecture : lectures)
-			lecturesDTO.add(toDTO(lecture));
-
-		return lecturesDTO;
-	}
-	
-	public Set<LectureDTO> toDTOWithSubjects(Iterable<Lecture> lectures) {
-		Set<LectureDTO> lecturesDTO = new HashSet<>();
-
-		for (Lecture lecture : lectures)
-			lecturesDTO.add(toDTOWithSubjects(lecture));
-
-		return lecturesDTO;
-	}
-
-	public LectureDTO toDTOWithSubjects(Lecture lecture) {
-		LectureDTO lectureDTO = new LectureDTO();
-		lectureDTO.setId(lecture.getId());
-		lectureDTO.setClassNumber(lecture.getClassNumber());
-		lectureDTO.setDate(lecture.getDate());
-		lectureDTO.setSubject(subjectConverter.toDTO(lecture.getSubject()));
+	@Override
+	public LectureDTO toDTO(Lecture source) {
+		LectureDTO lectureDTO = LectureDTO.builder()
+				.id(source.getId())
+				.classNumber(source.getClassNumber())
+				.date(source.getDate())
+				.subject(source.getSubject()).build();
+		
+		if(source.getTeacher() != null) {
+			Teacher teacher = source.getTeacher();
+			lectureDTO.setTeacher(TeacherDTO.builder().id(teacher.getId())
+					.name(teacher.getName()).surname(teacher.getSurname()).build());
+		}
+		
+		if(source.getStudents() != null) {
+			Set<StudentDTO> students = new HashSet<>(0);
+			source.getStudents().forEach(s -> students.add(StudentDTO.builder()
+					.id(s.getId())
+					.name(s.getName())
+					.surname(s.getSurname())
+					.course(s.getCourse()).build()));
+			lectureDTO.setStudents(students);
+		}
+		
 		return lectureDTO;
 	}
 
-	public LectureDTO toDTO(Lecture lecture) {
-		LectureDTO lectureDTO = new LectureDTO();
-		lectureDTO.setId(lecture.getId());
-		lectureDTO.setClassNumber(lecture.getClassNumber());
-		lectureDTO.setDate(lecture.getDate());
-		return lectureDTO;
+	@Override
+	public Lecture toEntity(LectureDTO source) {
+		Lecture lecture = Lecture.builder()
+				.id(source.getId())
+				.classNumber(source.getClassNumber())
+				.date(source.getDate())
+				.subject(source.getSubject()).build();
+		
+		if(source.getTeacher() != null) {
+			TeacherDTO teacherDTO = source.getTeacher();
+			lecture.setTeacher(Teacher.builder().id(teacherDTO.getId())
+					.name(teacherDTO.getName()).surname(teacherDTO.getSurname()).build());
+		}
+		
+		if(source.getStudents() != null) {
+			Set<Student> students = new HashSet<>(0);
+			source.getStudents().forEach(s -> students.add(Student.builder()
+					.id(s.getId())
+					.name(s.getName())
+					.surname(s.getSurname())
+					.course(s.getCourse()).build()));
+			lecture.setStudents(students);
+		}
+		
+		return lecture;
 	}
 
-	public LectureDTO toDTOWithEntities(Lecture lecture) {
-		LectureDTO lectureDTO = new LectureDTO();
-		lectureDTO.setId(lecture.getId());
-		lectureDTO.setClassNumber(lecture.getClassNumber());
-		lectureDTO.setDate(lecture.getDate());
-		lectureDTO.setSubject(subjectConverter.toDTO(lecture.getSubject()));
-		lectureDTO.setTeacher(teacherConverter.toDTO(lecture.getTeacher()));
-		lectureDTO.setStudents(studentConverter.toDTO(lecture.getStudents()));
-		return lectureDTO;
+	@Override
+	public Iterable<LectureDTO> toDTO(Iterable<Lecture> source) {
+		List<Lecture> lectures = (List<Lecture>) source;
+		return lectures.stream().map(l -> toDTO(l)).collect(Collectors.toList());
+	}
+
+	@Override
+	public Iterable<Lecture> toEntity(Iterable<LectureDTO> source) {
+		List<LectureDTO> lectures = (List<LectureDTO> )source;
+		return lectures.stream().map(l -> toEntity(l)).collect(Collectors.toList());
 	}
 
 }

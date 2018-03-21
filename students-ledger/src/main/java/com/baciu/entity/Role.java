@@ -11,11 +11,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
 @EqualsAndHashCode(exclude = {"students", "teachers"})
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Role {
 	
@@ -32,5 +38,8 @@ public class Role {
 	
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
 	private Set<Student> teachers = new HashSet<>(0);
+	
+	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
+	private Set<Administrator> administrators = new HashSet<>(0);
 
 }

@@ -17,11 +17,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(exclude = {"teacher", "subject", "students"})
+@Builder
 @Entity
 public class Lecture implements Serializable {
 	
@@ -39,13 +41,12 @@ public class Lecture implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 	
+	@Column(nullable = false)
+	private String subject;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "teacher_id", nullable = false)
 	private Teacher teacher;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "subject_id", nullable = false)
-	private Subject subject;
 	
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "lectures")
 	private Set<Student> students = new HashSet<>(0);

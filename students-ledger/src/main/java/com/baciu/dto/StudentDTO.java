@@ -1,44 +1,28 @@
 package com.baciu.dto;
 
-import java.io.Serializable;
 import java.util.Set;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class StudentDTO implements Serializable {
+@Builder
+public class StudentDTO extends UserDTO {
 	
 	private static final long serialVersionUID = 1L;
-	private Long id;
 	
-	@Length.List({
-	    @Length(min = 3, message = "name too short (min 3 chars)"),
-	    @Length(max = 30, message = "name too long (max 30 chars)")
-	})
-	private String name;
-	
-	@Length.List({
-	    @Length(min = 3, message = "surname too short (min 3 chars)"),
-	    @Length(max = 30, message = "surname too long (max 30 chars)")
-	})
-	private String surname;
-	
-	@NotEmpty(message = "email may not be empty")
-	@Email
-	private String email;
-	
-	@Length.List({
-	    @Length(min = 3, message = "password too short (min 3 chars)"),
-	    @Length(max = 30, message = "password too long (max 30 chars)")
-	})
-	private String password;
+	@Builder
+	public StudentDTO(Long id, String name, String surname, String password, String email) {
+		super(id, name, surname, password, email);
+	}
 	
 	@NotEmpty(message = "course may not be empty")
 	private String course;
+	
+	@NotEmpty(message = "semester may not be empty")
+	private Integer semester;
 	private Set<RoleDTO> roles;
 	private Set<LectureDTO> lectures;
 
