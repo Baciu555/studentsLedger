@@ -39,24 +39,20 @@ public class Student extends User {
 	
 	@Column(nullable = false)
 	private Integer semester;
-
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "student_lecture", joinColumns = {
-			@JoinColumn(name = "student_id")},
-			inverseJoinColumns = {@JoinColumn(name = "lecture_id")})
+	
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "students")
 	private Set<Lecture> lectures = new HashSet<>(0);
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "student_role", joinColumns = {
 			@JoinColumn(name = "student_id")},
 			inverseJoinColumns = {@JoinColumn(name = "role_id")})
-	protected Set<Role> roles = new HashSet<>(0);
+	public Set<Role> roles = new HashSet<>(0);
 	
 	@PrePersist
 	private void setDefaultRole() {
 		Role role = Role.builder().id(1L).build();
-		Set<Role> roles = new HashSet<>(Collections.singleton(role));
-		this.setRoles(roles);
+		this.setRoles(new HashSet<>(Collections.singleton(role)));
 	}
 
 }

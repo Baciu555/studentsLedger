@@ -1,5 +1,6 @@
 package com.baciu.entity;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,8 +28,9 @@ public class Teacher extends User {
 	private static final long serialVersionUID = 1L;
 	
 	@Builder
-	public Teacher(Long id, String name, String surname, String password, String email) {
+	public Teacher(Long id, String name, String surname, String password, String email, Double salary) {
 		super(id, name, surname, password, email);
+		this.salary = salary;
 	}
 	
 	@Column(nullable = false)
@@ -40,6 +43,12 @@ public class Teacher extends User {
 	@JoinTable(name = "teacher_role", joinColumns = {
 			@JoinColumn(name = "teacher_id")},
 			inverseJoinColumns = {@JoinColumn(name = "role_id")})
-	protected Set<Role> roles = new HashSet<>(0);
+	public Set<Role> roles = new HashSet<>(0);
+	
+	@PrePersist
+	private void setDefaultRole() {
+		Role role = Role.builder().id(2L).build();
+		this.setRoles(new HashSet<>(Collections.singleton(role)));
+	}
 	
 }

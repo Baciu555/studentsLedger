@@ -1,5 +1,6 @@
 package com.baciu.entity;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.PrePersist;
 
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +30,13 @@ public class Administrator extends User {
 	@JoinTable(name = "administrator_role", joinColumns = {
 			@JoinColumn(name = "administrator_id")},
 			inverseJoinColumns = {@JoinColumn(name = "role_id")})
-	protected Set<Role> roles = new HashSet<>(0);
+	public Set<Role> roles = new HashSet<>(0);
+	
+	@PrePersist
+	private void setDefaultRole() {
+		Role role = Role.builder().id(3L).build();
+		this.setRoles(new HashSet<>(Collections.singleton(role)));
+	}
+
 
 }

@@ -17,8 +17,6 @@ public class StudentConverter implements SimpleConverter<Student, StudentDTO> {
 
 	@Override
 	public StudentDTO toDTO(Student source) {
-		System.out.println("Source: " + source.getCourse());
-		
 		StudentDTO studentDTO = StudentDTO.builder()
 				.id(source.getId())
 				.name(source.getName())
@@ -27,8 +25,6 @@ public class StudentConverter implements SimpleConverter<Student, StudentDTO> {
 				.password(source.getPassword())
 				.course(source.getCourse())
 				.semester(source.getSemester()).build();
-		
-		System.out.println(studentDTO);
 		
 		if(source.getLectures() != null) {
 			Set<LectureDTO> lectures = new HashSet<>(0);

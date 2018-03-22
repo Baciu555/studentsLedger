@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 import com.baciu.dto.LectureDTO;
 import com.baciu.dto.StudentDTO;
 import com.baciu.dto.TeacherDTO;
@@ -12,6 +14,7 @@ import com.baciu.entity.Lecture;
 import com.baciu.entity.Student;
 import com.baciu.entity.Teacher;
 
+@Component
 public class LectureConverter implements SimpleConverter<Lecture, LectureDTO> {
 
 	@Override

@@ -1,7 +1,5 @@
 package com.baciu.service;
 
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +13,8 @@ public class LectureService {
 	@Autowired
 	private LectureRepository lectureRepository;
 	
-	public Set<Lecture> getAll() {
-		return (Set<Lecture>) lectureRepository.findAll();
+	public Iterable<Lecture> getAll() {
+		return lectureRepository.findAll();
 	}
 	
 	public Lecture getLecture(Long id) {

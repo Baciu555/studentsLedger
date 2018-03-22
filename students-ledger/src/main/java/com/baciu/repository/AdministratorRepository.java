@@ -7,5 +7,5 @@ import com.baciu.entity.Administrator;
 
 @Repository
 public interface AdministratorRepository extends CrudRepository<Administrator, Long> {
-
+	Administrator findByEmail(String email);
 }

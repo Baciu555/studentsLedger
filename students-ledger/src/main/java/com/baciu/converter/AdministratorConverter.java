@@ -3,9 +3,12 @@ package com.baciu.converter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 import com.baciu.dto.AdministratorDTO;
 import com.baciu.entity.Administrator;
 
+@Component
 public class AdministratorConverter implements SimpleConverter<Administrator, AdministratorDTO> {
 
 	@Override

@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
@@ -53,7 +54,10 @@ public class Lecture implements Serializable {
 	@JoinColumn(name = "teacher_id", nullable = false)
 	private Teacher teacher;
 	
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "lectures")
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "student_lecture", joinColumns = {
+			@JoinColumn(name = "lecture_id")},
+			inverseJoinColumns = {@JoinColumn(name = "student_id")})
 	private Set<Student> students = new HashSet<>(0);
 	
 	@PrePersist
