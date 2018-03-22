@@ -1,23 +1,16 @@
 package com.baciu.service;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.baciu.entity.Role;
 import com.baciu.entity.Student;
 import com.baciu.exception.EmailExistsException;
 import com.baciu.exception.StudentNotExistsException;
 import com.baciu.repository.StudentRepository;
-import com.baciu.validation.FieldValidator;
 
 @Service
 public class StudentService {
-	
-	private Long DEFAULT_ROLE_ID = 1L;
 	
 	@Autowired
 	private StudentRepository studentRepository;
@@ -25,17 +18,7 @@ public class StudentService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
-	@Autowired
-	private FieldValidator fieldValidator;
-	
 	public Student getStudent(Long id) {
-		if (!studentRepository.exists(id))
-			return null;
-		
-		return studentRepository.findOne(id);
-	}
-	
-	public Student getStudentLectures(Long id) {
 		if (!studentRepository.exists(id))
 			return null;
 		
@@ -47,17 +30,8 @@ public class StudentService {
 			throw new EmailExistsException();
 		
 		student.setPassword(passwordEncoder.encode(student.getPassword()));
-		student.setRoles(createDefaultRole());
 		
 		return studentRepository.save(student);
-	}
-	
-	private Set<Role> createDefaultRole() {
-		Role role = new Role();
-		role.setId(DEFAULT_ROLE_ID);
-		Set<Role> roles = new HashSet<>();
-		roles.add(role);
-		return roles;
 	}
 
 	public Student updateStudent(Student student) throws EmailExistsException {
@@ -72,6 +46,7 @@ public class StudentService {
 		existedStudent.setEmail(student.getEmail());
 		existedStudent.setPassword(passwordEncoder.encode(student.getPassword()));
 		existedStudent.setCourse(student.getCourse());
+		existedStudent.setSemester(student.getSemester());
 			
 		return studentRepository.save(existedStudent);
 	}

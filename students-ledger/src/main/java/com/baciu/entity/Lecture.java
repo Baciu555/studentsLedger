@@ -14,16 +14,21 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
 @EqualsAndHashCode(exclude = {"teacher", "subject", "students"})
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor 
 @Entity
 public class Lecture implements Serializable {
 	
@@ -50,5 +55,10 @@ public class Lecture implements Serializable {
 	
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "lectures")
 	private Set<Student> students = new HashSet<>(0);
+	
+	@PrePersist
+	private void setDefaultDate() {
+		date = new Date();
+	}
 	
 }

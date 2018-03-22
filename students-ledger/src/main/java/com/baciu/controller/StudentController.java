@@ -1,11 +1,7 @@
 package com.baciu.controller;
 
-import java.util.List;
-import java.util.Set;
-
 import javax.validation.Valid;
 
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +34,6 @@ public class StudentController {
 	private StudentService studentService;
 	
 	@Autowired
-	private ModelMapper modelMapper;
-	
-	@Autowired
 	private StudentConverter studentConverter;
 	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
@@ -58,35 +51,26 @@ public class StudentController {
 		if (student == null)
 			return new ResponseEntity<>("student not found", HttpStatus.BAD_REQUEST);
 		
+		System.out.println(student.getCourse() + " " + student.getSemester());
 		return new ResponseEntity<>(studentConverter.toDTO(student), HttpStatus.OK);
-	}
-	
-	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-	@GetMapping("students/{id}/lectures")
-	public ResponseEntity<?> getStudentLectures(@PathVariable("id") Long id) {
-		Student student = studentService.getStudentLectures(id);
-		if (student == null)
-			return new ResponseEntity<>("student not found", HttpStatus.BAD_REQUEST);
-		
-		return new ResponseEntity<>(modelMapper.map(student, StudentDTO.class), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("students")
 	public ResponseEntity<?> addStudent(@Valid @RequestBody StudentDTO studentDTO) throws EmailExistsException {
-		Student student = studentService.addStudent(modelMapper.map(studentDTO, Student.class));
+		Student student = studentService.addStudent(studentConverter.toEntity(studentDTO));
 		
 		LOG.info("student added");
-		return new ResponseEntity<>(modelMapper.map(student, StudentDTO.class), HttpStatus.OK);
+		return new ResponseEntity<>(studentConverter.toDTO(student), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@PutMapping("students")
 	public ResponseEntity<?> updateStudent(@Valid @RequestBody StudentDTO studentDTO) throws EmailExistsException {
-		Student student = studentService.updateStudent(modelMapper.map(studentDTO, Student.class));
+		Student student = studentService.updateStudent(studentConverter.toEntity(studentDTO));
 			
 		LOG.info("student updated");
-		return new ResponseEntity<>(modelMapper.map(student, StudentDTO.class), HttpStatus.OK);
+		return new ResponseEntity<>(studentConverter.toDTO(student), HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")

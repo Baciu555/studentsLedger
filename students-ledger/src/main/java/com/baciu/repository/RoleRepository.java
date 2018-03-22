@@ -3,9 +3,9 @@ package com.baciu.repository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.baciu.entity.Lecture;
+import com.baciu.entity.Role;
 
 @Repository
-public interface LectureRepository extends CrudRepository<Lecture, Long> {
+public interface RoleRepository extends CrudRepository<Role, Long> {
 
 }

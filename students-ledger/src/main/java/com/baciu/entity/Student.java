@@ -14,17 +14,24 @@ import javax.persistence.PrePersist;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
-@Builder
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true, exclude = {"roles", "lectures"})
+@ToString(callSuper = true, exclude = {"roles", "lectures"})
 public class Student extends User {
 	
 	private static final long serialVersionUID = 1L;
 	
 	@Builder
-	public Student(Long id, String name, String surname, String password, String email) {
+	public Student(Long id, String name, String surname, String password, String email, String course, Integer semester) {
 		super(id, name, surname, password, email);
+		this.course = course;
+		this.semester = semester;
 	}
 
 	@Column(nullable = false)

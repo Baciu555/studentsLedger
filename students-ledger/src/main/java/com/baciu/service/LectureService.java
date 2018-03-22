@@ -1,6 +1,5 @@
 package com.baciu.service;
 
-import java.util.Date;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +26,7 @@ public class LectureService {
 		return lectureRepository.findOne(id);
 	}
 	
-	public Set<Lecture> getAllWithSubjects() {
-		return (Set<Lecture>) lectureRepository.findAll();
-	}
-	
 	public Lecture addLecture(Lecture lecture) {
-		lecture.setDate(new Date());
 		return lectureRepository.save(lecture);
 	}
 	

@@ -50,16 +50,6 @@ public class TeacherController {
 		return new ResponseEntity<>(modelMapper.map(teacher, Teacher.class), HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-	@GetMapping("teachers/{id}/lectures")
-	public ResponseEntity<?> getTeacherLectures(@PathVariable("id") Long id) {
-		Teacher teacher = teacherService.getTeacherLectures(id);
-		if (teacher == null)
-			return new ResponseEntity<>("teacher not found", HttpStatus.BAD_REQUEST);
-		
-		return new ResponseEntity<>(modelMapper.map(teacher, TeacherDTO.class), HttpStatus.OK);
-	}
-	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("teachers")
 	public ResponseEntity<?> addTeacher(@Valid @RequestBody TeacherDTO teacherDTO) throws EmailExistsException {

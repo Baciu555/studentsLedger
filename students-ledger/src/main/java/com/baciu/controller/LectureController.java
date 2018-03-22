@@ -42,12 +42,6 @@ public class LectureController {
 	}
 	
 	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-	@GetMapping("lectures/subject")
-	public ResponseEntity<?> getLecturesSubject() {
-		return new ResponseEntity<>(lectureService.getAllWithSubjects(), HttpStatus.OK);
-	}
-	
-	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	@GetMapping("lectures/{id}")
 	public ResponseEntity<?> getLecture(@PathVariable("id") Long id) {
 		Lecture lecture = lectureService.getLecture(id);
